@@ -1,27 +1,34 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input, InputAdornment } from "@mui/material";
+// import PropTypes from "prop-types";
 import { Send } from "@mui/icons-material";
 import { Message } from "./message";
 import { useStyles } from "./use-styles";
 
-export function MessageList() {
+export const MessageList = () => {
+  const ref = useRef();
+
   const [value, setValue] = useState("");
   const [messages, setMessages] = useState([
     {
-      autor: "Bot",
-      message: "message 1",
-      date: new Date().toLocaleDateString(),
+      author: "Bot",
+      message: "message 333",
+      date: "date",
     },
   ]);
 
   const styles = useStyles();
+
+  // useEffect(() => {
+  //   console.log("ref", ref);
+  // }, []);
 
   const sendMessage = () => {
     if (value) {
       setMessages([
         ...messages,
         {
-          autor: "User",
+          author: "User",
           message: value,
           date: new Date().toLocaleDateString(),
         },
@@ -40,12 +47,12 @@ export function MessageList() {
     const lastMessages = messages[messages.length - 1];
     let timerId = null;
 
-    if (messages.length && lastMessages.autor === "User") {
+    if (messages.length && lastMessages.author === "User") {
       timerId = setTimeout(() => {
         setMessages([
           ...messages,
           {
-            autor: "Bot",
+            author: "Bot",
             message: "hello from bot",
             date: new Date().toLocaleDateString(),
           },
@@ -60,9 +67,9 @@ export function MessageList() {
 
   return (
     <>
-      <div>
-        {messages.map((message) => (
-          <Message message={message} />
+      <div ref={ref}>
+        {messages.map((message, index) => (
+          <Message message={message} key={message.date} />
         ))}
       </div>
 
@@ -81,4 +88,4 @@ export function MessageList() {
       />
     </>
   );
-}
+};

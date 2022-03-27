@@ -28,7 +28,7 @@ export function Chat({ title, selected, handleListItemClick }) {
       <ListItem>
         <AccountCircle fontSize="large" className={st.icon} />
       </ListItem>
-      <ListItem primary={title} className={st.text} />
+      <ListItemText primary={title} className={st.text} />
       {title}
     </ListItemButton>
   );
