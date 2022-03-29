@@ -1,2 +1,2 @@
-export * from "./profile";
+export * from "./profil";
 export * from "./chat";

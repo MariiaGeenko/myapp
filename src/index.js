@@ -36,14 +36,13 @@ const theme = createTheme({
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Header />
 
         <Routes>
           <Route path="/" element={<h1>Home page</h1>} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profil" element={<ProfilePage />} />
           <Route path="/chat/*" element={<ChatPage />} />
           <Route path="*" element={<h1>404 page</h1>} />
         </Routes>
