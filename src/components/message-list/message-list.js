@@ -6,7 +6,7 @@ import { Input, InputAdornment } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import { Message } from "./message";
 import { useStyles } from "./use-styles";
-import { sendMessageWithBot, messagesSelector } from "../../store/messages";
+import { messagesSelector, createMessageFb } from "../../store/messages";
 import { usePrevios } from "../../hooks/use-previos";
 
 export const MessageList = () => {
@@ -33,9 +33,7 @@ export const MessageList = () => {
   const send = useCallback(
     (message, author = "User") => {
       if (message) {
-        dispatch(
-          sendMessageWithBot(roomId, { author: author || "Bot", message })
-        );
+        dispatch(createMessageFb(roomId, { author: author || "Bot", message }));
 
         setValue("");
       }
@@ -93,3 +91,25 @@ export const MessageList = () => {
     </>
   );
 };
+
+// MessageList.propTypes = {
+//   test1: PropTypes.string.isRequired,
+//   test2: PropTypes.bool.isRequired,
+//   test3: PropTypes.shape({
+//     id: PropTypes.number.isRequired,
+//   }).isRequired,
+// };
+
+// const mapStateToProps = (state) => {
+//   return {
+//     messages: state.messages.messages,
+//   };
+// };
+
+// const mapDispatchToProps = (dispatch) => {
+//   return {
+//     sendMessage: (params) => dispatch(sendMessage(params)),
+//   };
+// };
+
+// const Component = connect(mapStateToProps, mapDispatchToProps)(MessageList);
