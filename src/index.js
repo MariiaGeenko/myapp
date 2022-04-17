@@ -1,109 +1,106 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-// import { App } from "./App";
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { Header, PrivateRoute, PublicRoute } from "./components";
+import {
+  ProfilePage,
+  ChatPage,
+  GistsPage,
+  LoginPage,
+  SignUpPage,
+} from "./pages";
+import { CustomThemeProvider } from "./theme-context";
+import { store, persistor } from "./store";
+import { auth } from "./api/firibase";
 
-import "./index.css";
+import "./global.css";
 
-const age = 12;
-const obj = { name: "test" };
-const arr2 = [1, 2, 3];
-const films = [
-  { title: "film 1", age: 2020 },
-  { title: "film 2", age: 2021 },
-];
+const App = () => {
+  const [session, setSession] = useState(null);
 
-const ComponentWitoutJSX = () => {
-  return React.createElement(
-    "div",
-    {},
-    React.createElement("h1", {}, `age: ${age}`)
-  );
-};
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setSession(user);
+      } else {
+        setSession(null);
+      }
+    });
+  }, []);
 
-const Message = ({ title }) => {
+  const isAuth = !!session;
+
   return (
-    <div>
-      <h1>Hello from {title}</h1>
-      <h2>age: {age}</h2>
-      <h2>name: {obj.name}</h2>
-      {arr2}
-    </div>
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <CustomThemeProvider>
+          <BrowserRouter>
+            <Header session={isAuth} />
+
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute isAuth={isAuth} to="/login">
+                    <h1>Home page</h1>
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute isAuth={isAuth}>
+                    <ProfilePage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/chat/*"
+                element={
+                  <PrivateRoute isAuth={isAuth}>
+                    <ChatPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/gists"
+                element={
+                  <PrivateRoute isAuth={isAuth}>
+                    <GistsPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute isAuth={isAuth}>
+                    <LoginPage />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/sign-up"
+                element={
+                  <PublicRoute isAuth={isAuth}>
+                    <SignUpPage />
+                  </PublicRoute>
+                }
+              />
+              <Route path="*" element={<h1>404 page</h1>} />
+            </Routes>
+          </BrowserRouter>
+        </CustomThemeProvider>
+      </PersistGate>
+    </Provider>
   );
 };
-
-const Films = () => {
-  return (
-    <div>
-      <h2>Films:</h2>
-      {films.map((film) => (
-        <div>
-          <h2>{film.title}</h2>
-          <h2>{film.age}</h2>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const FunctionComponent = ({ onClick }) => {
-  return (
-    <div>
-      <Message title="FunctionComponent" />
-      <Films />
-      <button onClick={() => onClick("FunctionComponent")}>click</button>
-    </div>
-  );
-};
-
-class ClassComponent extends React.Component {
-  render() {
-    console.log("class props", this.props);
-
-    const { onClick } = this.props;
-
-    return (
-      <div>
-        <Message title="ClassComponent" />
-        <Films />
-        <button onClick={() => onClick("ClassComponent")}>click</button>
-      </div>
-    );
-  }
-}
-
-// const obj = { name: "test" };
-
-// const ReactElement = (
-//   <div>
-//     <h1>Hello World</h1>
-//     <h2>age: {age}</h2>
-//   </div>
-// );
-
-// const FunctionComponent = () => {
-//   return ReactElement;
-// };
 
 ReactDOM.render(
   <React.StrictMode>
-    <ComponentWitoutJSX />
-    <hr />
-    <FunctionComponent
-      test={{ age: 12 }}
-      onClick={(target) => {
-        console.log("click from:", target);
-      }}
-    />
-    <hr />
-    <ClassComponent
-      test={{ age: 12 }}
-      test2={[]}
-      test3={false}
-      test4={null}
-      onClick={(target) => {
-        console.log("click from:", target);
-      }}
-    />
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );
